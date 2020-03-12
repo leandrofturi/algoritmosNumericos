@@ -1,4 +1,4 @@
-function [xJ, xS, xSOR] = AN192-EXE4-LeandroFurlam(arq, w, tol, nmaxiter, nome)
+function [xJ, xS, xSOR] = exe2(arq, w, tol, nmaxiter, nome)
   source jacobi.m;
   source sor.m;
   source fatora.m;
