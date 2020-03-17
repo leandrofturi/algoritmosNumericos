@@ -1,3 +1,4 @@
+clear
 nome_matriz = "2-arc130.mat"
 
 load(strcat("matrizes/", nome_matriz))
@@ -13,17 +14,37 @@ printf("\ndiagonal dominante: %s\n", diagonal_dominante(A));
 w = [0:0.25:2];
 [MJ, MS, MSOR] = fatora(A, w);
 [VJ, lambdaJ] = eig(MJ);
-printf("\nraio espectral JACOBI: %.6f\n", max(abs(diag(lambdaJ))));
+raioJ = max(abs(diag(lambdaJ)));
+printf("\nraio espectral JACOBI: %.6f\n", raioJ);
 [VS, lambdaS] = eig(MS);
-printf("raio espectral SEIDEL: %.6f\n", max(abs(diag(lambdaS))));
+raioS = max(abs(diag(lambdaS))); 
+printf("raio espectral SEIDEL: %.6f\n", raioS);
 for(i = 1:length(w))
   [VSOR, lambdaSOR] = eig(MSOR{i});
-  printf("raio espectral SOR(%.2f): %.6f\n", w(i), max(abs(diag(lambdaSOR))));
+  raioSOR(i) = max(abs(diag(lambdaSOR)));
+  printf("raio espectral SOR(%.2f): %.6f\n", w(i), raioSOR(i));
 endfor;
 
 tol = 10^-6;
-nmaxiter = 1000;
-[x, er, iter] = jacobi(A, b, tol, nmaxiter);
-for(i = w)
-  [x, er, iter] = sor(A, b, tol, nmaxiter, i);
+nmaxiter = 10;
+if(raioJ < 1)
+  [xJ, erJ, iterJ] = jacobi(A, b, tol, nmaxiter);
+endif;
+if(raioS < 1)
+  [xS, erS, iterS] = sor(A, b, tol, nmaxiter, 1);
+endif;
+for(i = 1:length(w))
+  erSORmax(i) = Inf;
+  if(raioSOR(i) < 1)
+    [xSOR{i}, erSOR{i}, iterSOR{i}] = sor(A, b, tol, nmaxiter, w(i));
+    erSORmax(i) = erSOR{i}(iterSOR{i});
+  endif;
 endfor;
+
+[value, i] = min(erSORmax);
+figure();
+plot(1:iterJ, log(erJ), 1:iterS, log(erS), 1:iterSOR{i}, log(erSOR{i}))
+xlabel("iteracao")
+ylabel("log(erro)")
+legend("Jacobi", "Seidel", sprintf("SOR(%.2f)", w(i)))
+legend boxoff
