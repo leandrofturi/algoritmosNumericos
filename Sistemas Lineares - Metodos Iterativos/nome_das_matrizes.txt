@@ -1,5 +1,0 @@
-1_bcsstk01.mat
-2_494_bus.mat
-3_1138_bus.mat
-4_bcsstk17.mat
-5_pre2.mat
