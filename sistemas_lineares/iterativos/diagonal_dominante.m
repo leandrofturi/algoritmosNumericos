@@ -1,8 +1,8 @@
 function [t] = diagonal_dominante(A);
 
-  [n,n] = size(A);
+  [n,n]= size(A);
   for(i = 1:n)
-    soma = 0.0;
+    soma =0.0;
     for(j = 1:n)
       soma += abs(A(i,j));
     endfor;
